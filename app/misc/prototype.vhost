@@ -1,0 +1,16 @@
+# CONF
+server {
+	listen			{PORT};
+	server_name		{URL};
+
+	root				{PATH};
+	index				index.cfm;
+
+	location / {	
+	 set $path_info $uri;
+        try_files 	$uri $uri/ @rewrites;
+	}
+	
+	include {PATH}/*.conf;
+	include	railo.conf;
+}

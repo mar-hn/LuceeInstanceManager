@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Lucee Manager</title>        
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="./../resources/css/materialize.min.css">
+        <link rel="stylesheet" href="./../resources/css/material_icons.css">
+        <link rel="stylesheet" href="./../resources/css/customfonts.css">
+        <!-- JQuery -->
+        <!--<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>-->
+        <script src="./../resources/js/jquery-3.2.0.min.js"></script>
+        <!--<script>if (window.module) module = window.module;</script>-->
+        <!-- Compiled and minified JavaScript -->
+        <script src="./../resources/js/materialize.min.js"></script>                        
+        <script src="./../resources/js/loadingoverlay.min.js"></script>
+
+        <style>
+            .noselect, .btn-floating, .material-icons{
+                -webkit-user-select: none;
+                user-select: none;                
+            }
+            a:not([draggable=true]), img:not([draggable=true]) {
+                -webkit-user-drag: none;
+                user-drag: none;
+            }
+            a[href^="http://"],
+            a[href^="https://"],
+            a[href^="ftp://"] {
+                -webkit-user-drag: auto;
+                user-drag: auto;
+            }            
+        </style>
+    </head>
+    <body>        
+        <!-- NAVBAR -->
+        <nav id="navbar-main" class="nav-extended deep-orange">
+            <div class="nav-wrapper">
+                <a href="#" class="brand-logo" style="display: flex">
+                    <div style="margin-top: 10px">
+                    <img src="../resources/imgs/logo2.png" style="width: 128px;">
+                    </div>
+                    <div style="margin-top: 18px; margin-left: 6px;">
+                    <span style="font-family: Pacifico; color: #fffefe">Manager</span>
+                    </div>
+                </a>
+                <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                <ul class="side-nav" id="mobile-demo">
+                    <li><a id="sn_about" href="#!">About</a></li>
+                    <li><a id="sn_devtools" href="#!">Developer Tools</a></li>
+                    <li><a id="sn_settings" href="#!">Settings</a></li>
+                    <li><a id="sn_exit" href="#!">Exit</a></li>
+                </ul>
+            </div>
+            <div class="nav-content">
+                <ul class="tabs tabs-transparent">
+                    <li class="tab"><a href="#test1">View</a></li>
+                    <li id="tab_modify" class="tab disabled"><a href="#test2">Modify</a></li>                                
+                </ul>
+            </div>
+        </nav>
+        <!-- Full Delete Modal -->
+        <div id="modal1" class="modal">
+            <div class="modal-content">
+            <h4>Are you sure?</h4>
+            <p>You are about to delete the instance, you must be absolutely sure about this.<br>               
+               <p>* Note: This won't delete the WWW Folder.</p>
+            </p>
+            </div>
+            <div class="modal-footer">
+            <a href="#!" id="btn_fdelete" class=" modal-action modal-close waves-effect waves-green btn-flat">Delete</a>
+            <a href="#!" class=" modal-action modal-close waves-effect waves-grey btn-flat">Cancel</a>
+            </div>
+        </div>
+        <!-- Clear References Modal -->
+        <div id="modal2" class="modal">
+            <div class="modal-content">
+            <h4>Are you sure?</h4>
+            <p> You are about to delete all references of the instance.<br>                
+                This means you are going to do the following:
+                <p>
+                <b>
+                Clear Nginx VirtualHost file for this instance<br>
+                Remove the hostname assigned.<br>
+                </b>
+                </p>
+                
+                The instance will still exist on Lucee server.xml, same with the WWW Folder.
+            </p>
+            </div>
+            <div class="modal-footer">
+            <a href="#!" id="btn_rdelete" class="modal-action modal-close waves-effect waves-red btn-flat">Continue</a>
+            <a href="#!" class="modal-action modal-close waves-effect waves-grey btn-flat">Cancel</a>
+            </div>
+        </div>
+            <div id="mdl_config" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                <h4>Settings</h4>
+                <div class="row">
+                    <form id="frm_config" class="col s12" onkeypress="return event.keyCode != 13">
+                    <div class="row">
+                        <div class="col s12">
+                            <label>Navbar color</label>
+                            <select id="cnf_navcolor" class="browser-default">
+                                <option value="" disabled selected>Choose your option</option>
+                                <option value="deep-orange">Original</option>
+                                <option value="red">Red</option>
+                                <option value="green">Green</option>
+                                <option value="black">Black</option>
+                                <option value="blue">Blue</option>>
+                                <option value="grey">Grey</option>
+                            </select>                            
+                        </div>
+                        <div class="input-field col s12">
+                        <i class="material-icons prefix">edit_location</i>
+                        <input id="cnf_location" type="text" class="validate" required>
+                        <label for="cnf_location">Lucee location</label>
+                        </div>
+                        <div class="input-field col s12">
+                        <i class="material-icons prefix">settings_ethernet</i>
+                        <input id="cnf_port" type="number" class="validate" required>
+                        <label for="cnf_port">Default Nginx Port</label>
+                        </div>                        
+                        <p>
+                            <input type="checkbox" id="cnf_ckshowapache" />
+                            <label for="cnf_ckshowapache">Show Apache status</label>
+                        </p>
+                        <p>
+                            <input type="checkbox" id="cnf_cktoggleservers" />
+                            <label for="cnf_cktoggleservers">Toggle between Apache and Nginx when changing status</label>
+                        </p>                           
+                    </div>
+                    <input type="submit" style="display: none">
+                    </form>
+                </div>
+                </div>
+                <div class="modal-footer">
+                <a href="#!" id="btn_configsave" class="modal-action waves-effect waves-green btn-flat btnsubmit" style="margin-left: 5px;">Save</a>
+                <a href="#!" id="btn_configcancel" class="modal-action modal-close waves-effect btn-flat">Cancel</a>
+                </div>
+            </div> 
+        <!-- END -->        
+        <!-- Tab 1 -->
+        <div id="test1" class="col s12 container">
+            <div class="row"></div>
+            <div class="left">
+                <label style="margin-left: 17px">Lucee Status</label>
+                <div class="switch">                    
+                    <label>
+                    Off
+                    <input id="status_lucee" type="checkbox">
+                    <span class="lever"></span>
+                    On
+                    </label>
+                </div>
+            </div>
+
+            <div class="left" style="margin-left: 20px">
+                <label style="margin-left: 17px">Nginx Status</label>
+                <div class="switch">                    
+                    <label>
+                    Off
+                    <input id="status_nginx" type="checkbox">
+                    <span class="lever"></span>
+                    On
+                    </label>
+                </div>
+            </div>
+            <div id="apachelever" class="left" style="margin-left: 20px">
+                <label style="margin-left: 17px">Apache Status</label>
+                <div class="switch">                    
+                    <label>
+                    Off
+                    <input id="status_apache" type="checkbox">
+                    <span class="lever"></span>
+                    On
+                    </label>
+                </div>
+            </div>                        
+            
+            <a href="#!" id="btn_create" class="btn-floating btn waves-effect waves-light red right"><i class="material-icons">add</i></a>
+            <a href="#!" id="btn_refresh" class="btn-floating btn waves-effect waves-light green right" style="margin-right: 10px;"><i class="material-icons">refresh</i></a>
+            <div class="row"></div>
+            <table class="bordered highlight">
+                <thead>
+                <tr id="columns">
+                    <!--<th>#</th>-->
+                    <th class="">Host URL</th>
+                    <th class="text-left">Nginx Port</th>
+                    <th class="center">Shortcuts</th>
+                </tr>
+                </thead>
+                <tbody id="rows">
+                </tbody>
+            </table>
+            <!-- MODALS -->
+            <div id="mdl_cinstance" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                <h4>Creating Instance</h4>
+                <div class="row">
+                    <form id="frm_create" class="col s12" onkeypress="return event.keyCode != 13">
+                    <div class="row">
+                        <div class="input-field col s12">
+                        <i class="material-icons prefix">http</i>
+                        <input id="c_url" type="text" class="validate" required autofocus>
+                        <label for="c_url">URL</label>
+                        </div>
+                        <div class="input-field col s11">
+                        <i class="material-icons prefix">folder</i>
+                        <input id="c_folder" type="text" class="validate" required>
+                        <label for="c_folder">Folder</label>
+                        </div>
+                        <div class="input-field col s1">
+                            <a id="btn_cfolder" class="btn-floating"><i class="material-icons">folder_open</i></a>
+                        </div>
+                        <div class="input-field col s12">
+                        <i class="material-icons prefix">settings_ethernet</i>
+                        <input id="c_port" type="number" class="validate" required>
+                        <label for="c_port">Nginx Port</label>
+                        </div>                                                
+                    </div>
+                    <input type="submit" style="display: none">
+                    </form>
+                </div>
+                </div>
+                <div class="modal-footer">
+                <a href="#!" id="btn_csave" class="modal-action waves-effect waves-green btn green btnsubmit" style="margin-left: 5px;">Create</a>                
+                <a href="#!" id="btn_ccancel" class="modal-action modal-close waves-effect btn red">Cancel</a>
+                </div>
+            </div>                       
+            <!--  END MODALS -->
+        </div> 
+        <!--</div>-->
+        <!-- TAB 2 -->
+        <div id="test2" class="col s12">   
+            <div class="container">
+                <div class="row"></div>
+                <h5><i class="material-icons">fingerprint</i> <span id="m_iname"></span>:<span id="m_iport"></span></h5>
+                Nginx Configuration:
+                <form>
+                <div class="row">
+                    <div class="row">
+                        <div class="input-field col s8">
+                            <i class="material-icons prefix">http</i>
+                            <input id="m_url" type="text" class="validate" required>
+                            <label for="m_url">URL</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <i class="material-icons prefix">settings_ethernet</i>
+                            <input id="m_port" type="number" class="validate" required>
+                            <label for="m_port">Nginx Port</label>
+                        </div>                        
+                        <div class="input-field col s11">
+                            <i class="material-icons prefix">folder</i>
+                            <input id="m_folder" type="text" class="validate" required>
+                            <label for="m_folder">Folder</label>
+                        </div>
+                        <div class="input-field col s1">
+                            <a id="btn_folder" class="btn-floating"><i class="material-icons">folder_open</i></a>                      
+                        </div> 
+                        <div class="col s12">
+                        <blockquote class="noselect" style="border-left-color: green">
+                        <div class="row">Status</div>
+                        <div class="row center">
+                            <!--<div class="col s2">
+                                <div id="st_serverxml" class="tooltipped" data-tooltip="Checks if instance is on workers.properties">
+                                <i class="material-icons">warning</i></div>
+                                 Lucee ServerXML
+                            </div>-->
+                            <div class="col s2">
+                                 <div id="st_vhost" class="tooltipped" data-tooltip="Checks if instance have assigned a virtualhost">
+                                <i class="material-icons">warning</i></div>
+                                 NGINX VirtualHost
+                            </div>
+                            <div class="col s2">
+                                <div id="st_hostname" class="tooltipped" data-tooltip="Checks if virtualhost hostname exists on /etc/hosts">
+                                <i class="material-icons">warning</i></div>
+                                 HostName
+                            </div>                                                                                   
+                        </div>
+                        </blockquote>                                                             
+                    </div>
+                    <div class="row">                        
+                        <a id="btn_msave" class="btn waves-effect waves-light right green btnsubmit">
+                            <i class="material-icons right">send</i>
+                            <span id="txt_btn_msave">Save</span>
+                        </a>
+                        <a class="waves-effect waves-light btn red" id="btn_OpenDeleteDialog"><i class="material-icons right">delete_forever</i> Delete</a>
+                        <a class="waves-effect waves-light btn" href="#modal2"><i class="material-icons right">delete</i> Clear all References</a>
+                    </div>            
+                </div>
+                </form>
+            </div>
+        </div>      
+        <script>require('../controller/main.js')</script>        
+    </body>
+</html>
